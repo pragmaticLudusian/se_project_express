@@ -1,0 +1,23 @@
+{
+  "name": "wtwr_backend",
+  "version": "1.0.0",
+  "description": "What To Wear?: Back End",
+  "homepage": "https://github.com/pragmaticLudusian/se_project_express#readme",
+  "bugs": {
+    "url": "https://github.com/pragmaticLudusian/se_project_express/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pragmaticLudusian/se_project_express.git"
+  },
+  "license": "ISC",
+  "author": "Arsen Movsesjan",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
