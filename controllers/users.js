@@ -13,6 +13,7 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  const { name, avatar } = req.body;
   User.create({ name, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: err }));
