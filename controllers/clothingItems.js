@@ -9,7 +9,7 @@ module.exports.getItems = (req, res) => {
 module.exports.createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({ name, weather, imageUrl })
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.status(201).send({ data: item }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
