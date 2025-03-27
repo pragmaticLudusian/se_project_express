@@ -27,9 +27,11 @@ module.exports.getUser = (req, res) => {
       console.error(error);
       if (error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else if (error.name === "NotFoundError") {
+      }
+      if (error.name === "NotFoundError") {
         return res.status(NOT_FOUND).send({ message: error.message });
-      } else return INTERNAL_SERVER_ERROR(res);
+      }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
 
@@ -41,8 +43,7 @@ module.exports.createUser = (req, res) => {
       console.error(error);
       if (error.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else {
-        return INTERNAL_SERVER_ERROR(res);
       }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };

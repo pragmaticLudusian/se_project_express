@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -11,7 +12,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     type: String,
     validate: {
-      validator: (value) => require("validator").isURL(value), // latter validator refers to validator.js module; within lies URL validation
+      validator: (value) => validator.isURL(value), // latter validator refers to validator.js module; within lies URL validation
       message: "You must enter a valid URL",
     },
   },

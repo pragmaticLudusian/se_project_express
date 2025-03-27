@@ -22,9 +22,8 @@ module.exports.createClothingItem = (req, res) => {
       console.error(error);
       if (error.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else {
-        return INTERNAL_SERVER_ERROR(res);
       }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
 
@@ -45,11 +44,11 @@ module.exports.deleteClothingItem = (req, res) => {
       console.error(error);
       if (error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
-      } else {
-        return INTERNAL_SERVER_ERROR(res);
       }
+      if (error.name === "NotFoundError") {
+        return res.status(NOT_FOUND).send({ message: error.message });
+      }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
 
@@ -76,11 +75,11 @@ module.exports.likeItem = (req, res) => {
       console.error(error);
       if (error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
-      } else {
-        return INTERNAL_SERVER_ERROR(res);
       }
+      if (error.name === "NotFoundError") {
+        return res.status(NOT_FOUND).send({ message: error.message });
+      }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
 
@@ -107,10 +106,10 @@ module.exports.unlikeItem = (req, res) => {
       console.error(error);
       if (error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
-      } else if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
-      } else {
-        return INTERNAL_SERVER_ERROR(res);
       }
+      if (error.name === "NotFoundError") {
+        return res.status(NOT_FOUND).send({ message: error.message });
+      }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
