@@ -36,7 +36,11 @@ module.exports.deleteClothingItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then(() => res.status(204).send({}))
+    .then(() =>
+      res.send({
+        message: `Clothing item ID ${req.params.id} has been deleted.`,
+      })
+    )
     .catch((error) => {
       console.error(error);
       if (error.name === "CastError") {
@@ -63,7 +67,11 @@ module.exports.likeItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then(() => res.status(204).send({}))
+    .then(() =>
+      res.status(201).send({
+        message: `Clothing item ID ${req.params.id} has been liked by user ID ${req.user._id}.`,
+      })
+    ) // updating by adding a like resource in an array can be 200/201
     .catch((error) => {
       console.error(error);
       if (error.name === "CastError") {
@@ -90,7 +98,11 @@ module.exports.unlikeItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then(() => res.status(204).send({}))
+    .then(() =>
+      res.send({
+        message: `Clothing item ID ${req.params.id} has been liked by user ID ${req.user._id}.`,
+      })
+    )
     .catch((error) => {
       console.error(error);
       if (error.name === "CastError") {
