@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (value) => validator.isURL(value), // latter validator refers to validator.js module; within lies URL validation
-      message: "You must enter a valid URL",
+      message: "You must enter a valid URL.",
     },
   },
 });
