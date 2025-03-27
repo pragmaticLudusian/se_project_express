@@ -36,7 +36,61 @@ module.exports.deleteClothingItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then((item) => res.status(204).send({ data: item }))
+    .then(() => res.status(204).send({}))
+    .catch((error) => {
+      console.error(error);
+      if (error.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: error.message });
+      } else if (error.name === "NotFoundError") {
+        return res.status(NOT_FOUND).send({ message: error.message });
+      } else {
+        return INTERNAL_SERVER_ERROR(res);
+      }
+    });
+};
+
+module.exports.likeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.id,
+    {
+      $addToSet: { likes: req.user._id },
+    },
+    { new: true }
+  )
+    .orFail(() => {
+      const error = new Error("Clothing item ID not found.");
+      error.name = "NotFoundError";
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
+    .then(() => res.status(204).send({}))
+    .catch((error) => {
+      console.error(error);
+      if (error.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: error.message });
+      } else if (error.name === "NotFoundError") {
+        return res.status(NOT_FOUND).send({ message: error.message });
+      } else {
+        return INTERNAL_SERVER_ERROR(res);
+      }
+    });
+};
+
+module.exports.unlikeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.id,
+    {
+      $pull: { likes: req.user._id },
+    },
+    { new: true }
+  )
+    .orFail(() => {
+      const error = new Error("Clothing item ID not found.");
+      error.name = "NotFoundError";
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
+    .then(() => res.status(204).send({}))
     .catch((error) => {
       console.error(error);
       if (error.name === "CastError") {
