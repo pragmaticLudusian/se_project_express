@@ -1,6 +1,7 @@
 const { PORT = 3001 } = process.env;
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const routerIndex = require("./routes/index");
 
 const app = express(); // middleware positioning - DOES matter
@@ -11,6 +12,7 @@ mongoose
   .catch(console.error);
 
 app.use(express.json()); // w/out this, the req body will be empty
+app.use(helmet()); // set default security headers
 
 app.use((req, res, next) => {
   req.user = {
