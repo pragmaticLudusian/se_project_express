@@ -1,11 +1,14 @@
 const { PORT = 3001 } = process.env;
 const express = require("express");
 const mongoose = require("mongoose");
-const { NOT_FOUND } = require("./utils/errors");
+const routerIndex = require("./routes/index");
 
 const app = express(); // middleware positioning - DOES matter
 
-mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
+mongoose
+  .connect("mongodb://127.0.0.1:27017/wtwr_db")
+  .then(() => console.log("connected to db in port 27017"))
+  .catch(console.error);
 
 app.use(express.json()); // w/out this, the req body will be empty
 
@@ -16,12 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/users", require("./routes/users"));
-app.use("/items", require("./routes/clothingItems"));
-
-app.use("/", (req, res) => {
-  res.status(NOT_FOUND).send({ message: "Requested resource not found" });
-}); // apply to every unlisted route
+app.use("/", routerIndex); // either a clear const or a required filepath
 
 app.listen(PORT, () => {
   console.log(`app's now listening to port ${PORT}`);
