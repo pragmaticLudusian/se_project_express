@@ -1,4 +1,5 @@
-const { PORT = 3001 } = process.env;
+require("dotenv").config();
+const { SERVER_PORT, DB_PORT } = process.env;
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
@@ -7,8 +8,8 @@ const routerIndex = require("./routes/index");
 const app = express(); // middleware positioning - DOES matter
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/wtwr_db")
-  .then(() => console.log("connected to db in port 27017"))
+  .connect(`mongodb://127.0.0.1:${DB_PORT}/wtwr_db`)
+  .then(() => console.log(`connected to db in port ${DB_PORT}`))
   .catch(console.error);
 
 app.use(express.json()); // w/out this, the req body will be empty
@@ -23,6 +24,6 @@ app.use((req, res, next) => {
 
 app.use("/", routerIndex); // either a clear const or a required filepath
 
-app.listen(PORT, () => {
-  console.log(`app's now listening to port ${PORT}`);
+app.listen(SERVER_PORT, () => {
+  console.log(`app's now listening to port ${SERVER_PORT}`);
 });
