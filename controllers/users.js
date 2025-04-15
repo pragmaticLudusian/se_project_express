@@ -1,3 +1,4 @@
+const { JWT_SECRET } = process.env;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
@@ -72,12 +73,15 @@ module.exports.login = (req, res) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: "7d",
+        expiresIn: "1w",
       });
-      res.send(token);
+      res.send({ token });
     })
     .catch((error) => {
       console.error(error);
-      res.status(UNAUTHORIZED).send({ message: error.message });
+      if (error.name === "UnauthorizedError") {
+        return res.status(error.statusCode).send({ message: error.message });
+      }
+      return INTERNAL_SERVER_ERROR(res);
     });
 };
