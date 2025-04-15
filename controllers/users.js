@@ -1,8 +1,10 @@
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  CONFLICT,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
@@ -36,13 +38,28 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+  const { name, avatar, email, password } = req.body;
+
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((user) =>
+      res.status(201).send({
+        user: {
+          _id: user._id,
+          email: user.email,
+        },
+      })
+    )
     .catch((error) => {
       console.error(error);
       if (error.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
+      }
+      if (error.code === 11000) {
+        error.message =
+          "Duplicate email address conflicting with already-existing user's email.";
+        return res.status(CONFLICT).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
     });
