@@ -1,7 +1,9 @@
 const router = require("express").Router();
+const { createUser, login } = require("../controllers/users");
 const { NOT_FOUND } = require("../utils/errors");
 
-router.use("/users", require("./users"));
+router.post("/signup", createUser);
+router.post("/signin", login);
 router.use("/items", require("./clothingItems"));
 
 router.use("/", (req, res) => {
