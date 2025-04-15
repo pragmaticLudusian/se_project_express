@@ -46,7 +46,7 @@ module.exports.deleteClothingItem = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: error.message });
       }
       if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
+        return res.status(error.statusCode).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
     });
@@ -77,7 +77,7 @@ module.exports.likeItem = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: error.message });
       }
       if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
+        return res.status(error.statusCode).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
     });
@@ -108,7 +108,7 @@ module.exports.unlikeItem = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: error.message });
       }
       if (error.name === "NotFoundError") {
-        return res.status(NOT_FOUND).send({ message: error.message });
+        return res.status(error.statusCode).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
     });
