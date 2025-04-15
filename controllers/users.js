@@ -1,10 +1,12 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CONFLICT,
+  UNAUTHORIZED,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
@@ -62,5 +64,20 @@ module.exports.createUser = (req, res) => {
         return res.status(CONFLICT).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.send(token);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(UNAUTHORIZED).send({ message: error.message });
     });
 };
