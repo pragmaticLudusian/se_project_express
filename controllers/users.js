@@ -5,9 +5,8 @@ const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
   CONFLICT,
-  UNAUTHORIZED,
+  INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
@@ -70,6 +69,34 @@ module.exports.login = (req, res) => {
     .catch((error) => {
       console.error(error);
       if (error.name === "UnauthorizedError") {
+        return res.status(error.statusCode).send({ message: error.message });
+      }
+      return INTERNAL_SERVER_ERROR(res);
+    });
+};
+
+module.exports.updateUser = (req, res) => {
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .orFail(() => {
+      const error = new Error("User ID not found.");
+      error.name = "NotFoundError";
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
+    .then((data) =>
+      res.send({ data: { name: data.name, avatar: data.avatar } })
+    )
+    .catch((error) => {
+      console.error(error);
+      if (error.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: error.message });
+      }
+      if (error.name === "NotFoundError") {
         return res.status(error.statusCode).send({ message: error.message });
       }
       return INTERNAL_SERVER_ERROR(res);
