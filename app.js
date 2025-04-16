@@ -1,9 +1,10 @@
 require("dotenv").config();
-const { SERVER_PORT, DB_PORT } = process.env;
+const { SERVER_PORT = 3001, DB_PORT = 27017 } = process.env;
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const routerIndex = require("./routes/index");
+const auth = require("./middlewares/auth");
 
 const app = express(); // middleware positioning - DOES matter
 
@@ -15,14 +16,9 @@ mongoose
 app.use(express.json()); // w/out this, the req body will be empty
 app.use(helmet()); // set default security headers
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "67e2d2b28a199f613799d971",
-  };
-  next();
-});
-
 app.use("/", routerIndex); // either a clear const or a required filepath
+
+app.use(auth); // before it don't need auth, following it do need auth
 
 app.listen(SERVER_PORT, () => {
   console.log(`app's now listening to port ${SERVER_PORT}`);
