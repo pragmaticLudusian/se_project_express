@@ -19,23 +19,12 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
-  User.findById(req.params.id)
-    .orFail(() => {
-      const error = new Error("User ID not found.");
-      error.name = "NotFoundError";
-      error.statusCode = NOT_FOUND;
-      throw error; // db queries normally don't show errors, so throw one
-    }) // doesn't cover ObjectID casting (24-char string)
+module.exports.getCurrentUser = (req, res) => {
+  const { _id } = req.user;
+  User.findById(_id)
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       console.error(error);
-      if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: error.message });
-      }
-      if (error.name === "NotFoundError") {
-        return res.status(error.statusCode).send({ message: error.message });
-      }
       return INTERNAL_SERVER_ERROR(res);
     });
 };
@@ -60,6 +49,7 @@ module.exports.createUser = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: error.message });
       }
       if (error.code === 11000) {
+        // MongoServerError
         error.message =
           "Duplicate email address conflicting with already-existing user's email.";
         return res.status(CONFLICT).send({ message: error.message });

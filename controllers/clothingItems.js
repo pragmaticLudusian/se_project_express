@@ -33,8 +33,8 @@ module.exports.deleteClothingItem = (req, res) => {
       const error = new Error("Clothing item ID not found.");
       error.name = "NotFoundError";
       error.statusCode = NOT_FOUND;
-      throw error;
-    })
+      throw error; // db queries normally don't show errors, so throw one
+    }) // doesn't cover ObjectID casting (24-char string)
     .then(() =>
       res.send({
         message: `Clothing item ID ${req.params.id} has been deleted.`,
