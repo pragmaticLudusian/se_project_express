@@ -48,7 +48,8 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
 };
 
 function throwAuthError() {
-  const error = new Error("User email and/or password is incorrect");
+  // mongoose would return 200 if no error is thrown
+  const error = new Error("User email and/or password is/are incorrect.");
   error.name = "UnauthorizedError";
   error.statusCode = UNAUTHORIZED;
   throw error;

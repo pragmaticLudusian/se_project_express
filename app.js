@@ -4,7 +4,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const routerIndex = require("./routes/index");
-const auth = require("./middlewares/auth");
 
 const app = express(); // middleware positioning - DOES matter
 
@@ -17,8 +16,6 @@ app.use(express.json()); // w/out this, the req body will be empty
 app.use(helmet()); // set default security headers
 
 app.use("/", routerIndex); // either a clear const or a required filepath
-
-app.use(auth); // before it don't need auth, following it do need auth
 
 app.listen(SERVER_PORT, () => {
   console.log(`app's now listening to port ${SERVER_PORT}`);
