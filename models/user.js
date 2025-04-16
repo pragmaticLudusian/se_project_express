@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
   password: {
     required: true,
     type: String,
+    select: false,
   },
 });
 
@@ -38,6 +39,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
   password
 ) {
   return this.findOne({ email }) // this = the User model
+    .select("+password") // include into the object despite select:false
     .then((user) => {
       if (!user) return Promise.reject(throwAuthError());
       return bcrypt.compare(password, user.password).then((matched) => {

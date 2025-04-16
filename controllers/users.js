@@ -33,7 +33,11 @@ module.exports.createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((hash) => {
+      const user = User.create({ name, avatar, email, password: hash });
+      delete user.password; // security: omit p/w from res
+      return user;
+    })
     .then((user) =>
       res.status(201).send({
         user: {
