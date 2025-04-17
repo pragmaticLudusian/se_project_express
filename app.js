@@ -3,6 +3,7 @@ const { SERVER_PORT = 3001, DB_PORT = 27017 } = process.env;
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const cors = require("cors");
 const routerIndex = require("./routes/index");
 
 const app = express(); // middleware positioning - DOES matter
@@ -14,6 +15,7 @@ mongoose
 
 app.use(express.json()); // w/out this, the req body will be empty
 app.use(helmet()); // set default security headers
+app.use(cors());
 
 app.use("/", routerIndex); // either a clear const or a required filepath
 
