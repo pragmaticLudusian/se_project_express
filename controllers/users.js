@@ -92,9 +92,7 @@ module.exports.updateUser = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then((data) =>
-      res.send({ data: { name: data.name, avatar: data.avatar } })
-    )
+    .then(({ name, avatar }) => res.send({ data: { name, avatar } }))
     .catch((error) => {
       console.error(error);
       if (error.name === "ValidationError") {

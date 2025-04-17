@@ -1,6 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST,
+  FORBIDDEN,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
@@ -28,22 +29,32 @@ module.exports.createClothingItem = (req, res) => {
 };
 
 module.exports.deleteClothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.id)
+  ClothingItem.findById(req.params.id)
     .orFail(() => {
       const error = new Error("Clothing item ID not found.");
       error.name = "NotFoundError";
       error.statusCode = NOT_FOUND;
       throw error; // db queries normally don't show errors, so throw one
     }) // doesn't cover ObjectID casting (24-char string)
-    .then(() =>
+    .then((item) => {
+      if (JSON.stringify(req.user._id) !== JSON.stringify(item.owner)) {
+        const error = new Error("You can't delete someone else's clothing.");
+        error.name = "ForbiddenError";
+        error.statusCode = FORBIDDEN;
+        throw error; // Promise.reject can work here too, but not inside orFail()
+      }
+      ClothingItem.deleteOne(item).catch(); // for some reason without the catch block it won't function separately from just find the id
       res.send({
         message: `Clothing item ID ${req.params.id} has been deleted.`,
-      })
-    )
+      });
+    })
     .catch((error) => {
       console.error(error);
       if (error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: error.message });
+      }
+      if (error.name === "ForbiddenError") {
+        return res.status(error.statusCode).send({ message: error.message });
       }
       if (error.name === "NotFoundError") {
         return res.status(error.statusCode).send({ message: error.message });
