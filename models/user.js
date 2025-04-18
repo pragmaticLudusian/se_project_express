@@ -38,6 +38,13 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
 ) {
+  function throwAuthError() {
+    // mongoose would return 200 if no error is thrown
+    const error = new Error("User email and/or password is/are incorrect.");
+    error.name = "UnauthorizedError";
+    error.statusCode = UNAUTHORIZED;
+    throw error;
+  }
   return this.findOne({ email }) // this = the User model
     .select("+password") // include into the object despite select:false
     .then((user) => {
@@ -48,13 +55,5 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
       });
     });
 };
-
-function throwAuthError() {
-  // mongoose would return 200 if no error is thrown
-  const error = new Error("User email and/or password is/are incorrect.");
-  error.name = "UnauthorizedError";
-  error.statusCode = UNAUTHORIZED;
-  throw error;
-}
 
 module.exports = mongoose.model("user", userSchema);

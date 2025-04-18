@@ -53,9 +53,10 @@ module.exports.createUser = (req, res) => {
       }
       if (error.code === 11000) {
         // MongoServerError
-        error.message =
-          "Duplicate email address conflicting with already-existing user's email.";
-        return res.status(CONFLICT).send({ message: error.message });
+        return res.status(CONFLICT).send({
+          message:
+            "Duplicate email address conflicting with already-existing user's email.",
+        });
       }
       return INTERNAL_SERVER_ERROR(res);
     });
@@ -92,7 +93,7 @@ module.exports.updateUser = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then(({ name, avatar }) => res.send({ data: { name, avatar } }))
+    .then(() => res.send({ data: { name, avatar } }))
     .catch((error) => {
       console.error(error);
       if (error.name === "ValidationError") {
