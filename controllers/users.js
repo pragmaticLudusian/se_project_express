@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env; // use .env file inside root dir
 const User = require("../models/user");
 const {
   BAD_REQUEST,
@@ -36,8 +36,8 @@ module.exports.createUser = (req, res) => {
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
-      const userCopy = JSON.parse(JSON.stringify(user));
-      delete userCopy.password;
+      const userCopy = JSON.parse(JSON.stringify(user)); // create deep copy of the user object...
+      delete userCopy.password; // ...as its properties could then be deleted before sending the res
       res.status(201).send({
         user: userCopy,
       });
