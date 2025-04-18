@@ -38,12 +38,9 @@ module.exports.createUser = (req, res) => {
       delete user.password; // security: omit p/w from res
       return user;
     })
-    .then((user) =>
+    .then(() =>
       res.status(201).send({
-        user: {
-          _id: user._id,
-          email: user.email,
-        },
+        user: { name, avatar },
       })
     )
     .catch((error) => {
@@ -73,6 +70,9 @@ module.exports.login = (req, res) => {
     })
     .catch((error) => {
       console.error(error);
+      if (error.name === "ValidationError") {
+        return res.status(error.statusCode).send({ message: error.message });
+      }
       if (error.name === "UnauthorizedError") {
         return res.status(error.statusCode).send({ message: error.message });
       }

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
-const { UNAUTHORIZED } = require("../utils/errors");
+const { UNAUTHORIZED, BAD_REQUEST } = require("../utils/errors");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -45,10 +45,16 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
     error.statusCode = UNAUTHORIZED;
     throw error;
   }
+  if (!email || !password) {
+    const error = new Error("Error syntax.");
+    error.name = "ValidationError";
+    error.statusCode = BAD_REQUEST;
+    return Promise.reject(error); // throw wouldn't be effective here
+  }
   return this.findOne({ email }) // this = the User model
     .select("+password") // include into the object despite select:false
     .then((user) => {
-      if (!user) return Promise.reject(throwAuthError());
+      if (!user) return Promise.reject(throwAuthError()); // would be triggered if user isn't authenticated - whether from empty input or incorrect input
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) return Promise.reject(throwAuthError());
         return user;

@@ -24,5 +24,6 @@ module.exports = (req, res, next) => {
   }
 
   req.user = payload;
-  return next(); // return necessary for linter
+  next();
+  return null; // expected to return a value at the end of arrow function (consistent-return)
 };
