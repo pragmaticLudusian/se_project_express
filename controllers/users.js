@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../utils/config");
+
+const { JWT_SECRET } = process.env;
 const User = require("../models/user");
 const {
   BAD_REQUEST,
@@ -33,16 +34,14 @@ module.exports.createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      const user = User.create({ name, avatar, email, password: hash });
-      delete user.password; // security: omit p/w from res
-      return user;
-    })
-    .then(() =>
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((user) => {
+      const userCopy = JSON.parse(JSON.stringify(user));
+      delete userCopy.password;
       res.status(201).send({
-        user: { name, avatar },
-      })
-    )
+        user: userCopy,
+      });
+    })
     .catch((error) => {
       console.error(error);
       if (error.name === "ValidationError") {

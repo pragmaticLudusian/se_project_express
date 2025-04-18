@@ -43,7 +43,7 @@ module.exports.deleteClothingItem = (req, res) => {
         error.statusCode = FORBIDDEN;
         throw error; // Promise.reject can work here too, but not inside orFail()
       }
-      ClothingItem.deleteOne(item).catch(); // for some reason without the catch block it won't function separately from just find the id
+      ClothingItem.deleteOne(item).catch(); // for some reason, without the catch block it won't function separately from just find the id method
       res.send({
         message: `Clothing item ID ${req.params.id} has been deleted.`,
       });
