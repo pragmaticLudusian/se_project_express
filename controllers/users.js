@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { JWT_SECRET } = process.env; // use .env file inside root dir
+const { JWT_SECRET } = process.env;
 const User = require("../models/user");
 const {
   BAD_REQUEST,
@@ -9,15 +9,6 @@ const {
   CONFLICT,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
-
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch((error) => {
-      console.error(error);
-      return INTERNAL_SERVER_ERROR(res); // return is implicit in here and in the func call, but just in case
-    });
-};
 
 module.exports.getCurrentUser = (req, res) => {
   const { _id } = req.user;

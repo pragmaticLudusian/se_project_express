@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-const { SERVER_PORT = 3001, DB_PORT = 27017 } = process.env;
+const { SERVER_PORT = 3001, DB_PORT = 27017, JWT_SECRET } = process.env;
+process.env.JWT_SECRET = JWT_SECRET || "default"; // use a default value if .env isn't set
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
